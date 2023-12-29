@@ -32,7 +32,7 @@ pub struct AsepriteAnimation {
     forward: bool,
     time_elapsed: Duration,
     tag_changed: bool,
-    repeat: bool,
+    pub repeat: bool,
 }
 
 impl Default for AsepriteAnimation {
