@@ -32,6 +32,7 @@ pub struct AsepriteAnimation {
     forward: bool,
     time_elapsed: Duration,
     tag_changed: bool,
+    repeat: bool,
 }
 
 impl Default for AsepriteAnimation {
@@ -43,6 +44,7 @@ impl Default for AsepriteAnimation {
             forward: Default::default(),
             time_elapsed: Default::default(),
             tag_changed: true,
+            repeat: true,
         }
     }
 }
@@ -97,7 +99,7 @@ impl AsepriteAnimation {
                         let next_frame = self.current_frame + 1;
                         if range.contains(&(next_frame as u16)) {
                             self.current_frame = next_frame;
-                        } else {
+                        } else if self.repeat {
                             self.current_frame = range.start as usize;
                         }
                     }
@@ -109,7 +111,7 @@ impl AsepriteAnimation {
                             } else {
                                 self.current_frame = range.end as usize - 1;
                             }
-                        } else {
+                        } else if self.repeat {
                             self.current_frame = range.end as usize - 1;
                         }
                     }
@@ -118,7 +120,7 @@ impl AsepriteAnimation {
                             let next_frame = self.current_frame + 1;
                             if range.contains(&(next_frame as u16)) {
                                 self.current_frame = next_frame;
-                            } else {
+                            } else if self.repeat {
                                 self.current_frame = next_frame.saturating_sub(1);
                                 self.forward = false;
                             }
@@ -136,7 +138,11 @@ impl AsepriteAnimation {
                 }
             }
             None => {
-                self.current_frame = (self.current_frame + 1) % info.frame_count;
+                if self.repeat {
+                    self.current_frame = (self.current_frame + 1) % info.frame_count;
+                } else if self.current_frame < info.frame_count - 1 {
+                    self.current_frame += 1;
+                }
             }
         }
     }
