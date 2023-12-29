@@ -101,6 +101,8 @@ impl AsepriteAnimation {
                             self.current_frame = next_frame;
                         } else if self.repeat {
                             self.current_frame = range.start as usize;
+                        } else {
+                            self.pause();
                         }
                     }
                     reader::raw::AsepriteAnimationDirection::Reverse => {
@@ -113,6 +115,8 @@ impl AsepriteAnimation {
                             }
                         } else if self.repeat {
                             self.current_frame = range.end as usize - 1;
+                        } else {
+                            self.pause();
                         }
                     }
                     reader::raw::AsepriteAnimationDirection::PingPong => {
@@ -123,6 +127,8 @@ impl AsepriteAnimation {
                             } else if self.repeat {
                                 self.current_frame = next_frame.saturating_sub(1);
                                 self.forward = false;
+                            } else {
+                                self.pause();
                             }
                         } else {
                             let next_frame = self.current_frame.checked_sub(1);
@@ -142,6 +148,8 @@ impl AsepriteAnimation {
                     self.current_frame = (self.current_frame + 1) % info.frame_count;
                 } else if self.current_frame < info.frame_count - 1 {
                     self.current_frame += 1;
+                } else {
+                    self.pause();
                 }
             }
         }
